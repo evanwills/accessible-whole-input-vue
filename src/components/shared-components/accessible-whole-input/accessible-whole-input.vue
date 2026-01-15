@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <component :is="tag" ref="wrapperTag">
     <label v-if="!isCheckable" :for="id" :class="labelClass" data-tmp>
       {{ label }}
       <RequiredStr :required="required" :required-rev="requiredRev" />
@@ -46,15 +46,17 @@
       <slot name="help"><p>{{ helpTxt }}</p></slot>
     </div>
     <!--  END:  help-msg (bottom) -->
-  </div>
+  </component>
 </template>
 
 <script setup>
 import { onBeforeMount, ref, useSlots, watch } from 'vue';
 import { hasContent } from '../../../utils/vue-utils';
-import ConsoleLogger from '../../../utils/ConsoleLogger.class';
+import ConsoleLogger from '../../../utils/ConsoleLoggerDummy.class';
+import ExternalBlur from '../../../utils/ExternalBlur.class';
 import ErrorMsg from './ErrorMsg.vue';
 import RequiredStr from './RequiredStr.vue';
+import { getWrapperProps } from './accessible-whole-input.utils';
 
 // --------------------------------------------------
 // START: Vue utils
@@ -71,131 +73,7 @@ const emit = defineEmits(['updateDescByIDs']);
 // --------------------------------------------------
 // START: Properties/attributes
 
-const props = defineProps({
-  /**
-   * Error message to show the user when the value of the field is
-   * invalid
-   *
-   * > __Note:__ If the field is marked as `required` an empty
-   * >       value will also cause the error message to show.
-   *
-   * > __Note also:__ If you need to include HTML (e.g. a link)
-   * >       in the error message use the "error" slot instead.
-   *
-   * @property {string} errorMsg
-   */
-  errorMsg: { type: String, required: false, default: '' },
-
-  /**
-   * A function that outputs an error message string when different
-   * messages are required for different types of errors.
-   *
-   * > __Note:__ If both `error-msg-func` and `error-msg` attributes
-   * >       are present `errorMsgFunc` will be used and `errorMsg`
-   * >       will be ignored.
-   */
-  errorMsgFunc: { type: Function, required: false, default: null },
-
-  /**
-   * Whether or not this field has been marked as invalid due to
-   * (addional) external rules
-   *
-   * e.g. User must enter either a mobile phone number or a land
-   *    line number.
-   *    If both are empty then both fields must be marked as
-   *    invalid.
-   *
-   * @property {boolean} externalInvalid
-   */
-  externalInvalid: { type: Boolean, required: false, default: false },
-
-  /**
-   * ID of the field being rendered
-   *
-   * Used to link the field to its label, error message and help
-   * text
-   *
-   * > __Note:__ If id is undefined or empty, an error will be thrown
-   *
-   * @property {string} id
-   */
-  id: { type: String, required: true },
-
-  group: { type: Boolean, required: false, default: false },
-
-  /**
-   * Whether or not to render help text before or after input field
-   *
-   * @property {boolean} helpFirst
-   */
-  helpFirst: { type: Boolean, required: false, default: false },
-
-  /**
-   * Help text to show the user to make the purpose or
-   * requirements of the field clear
-   *
-   * > __Note:__ If you need to include HTML (e.g. a link) in the
-   * >       error message use the "help" slot instead.
-   *
-   * @property {string} helpTxt
-   */
-  help: { type: String, required: false, default: '' },
-
-  /**
-   * Whether or not to hide the label from screen.
-   * (Label is still visible to screen readers)
-   *
-   * Sometimes a design uses non-standard format for input fields
-   * and their labels.
-   * e.g. When the (visible) label for a field is use in such away
-   *    that the input field's value forms first part of a
-   *    sentance and the label form the rest of the sentance.
-   *    In this case the screen reader usage of the label may
-   *    not make any sense. In this case, we use the `help-txt`
-   *    value as the visible label and hide the field's actual
-   *    label from screen users.
-   *
-   * @property {boolean} hideLabel
-   */
-  hideLabel: { type: Boolean, required: false, default: false },
-
-  /**
-   * Text to label the field
-   *
-   * This is an accessiblity requirement.
-   *
-   * > __Note:__ If label is undefined or empty, an error will
-   * >       be thrown
-   *
-   * (See
-   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label)
-   * for more info)
-   *
-   * @property {string} label
-   */
-  label: { type: String, required: true },
-
-  required: { type: Boolean, required: false, default: false },
-
-  /**
-   * Whether or not render "(optional)" when input is optional,
-   * instead of "(required)" when it's required.
-   *
-   * > __Note:__ This is a __VERY BAD__ pattern, however, my
-   * >       current use-case requires it until we can have
-   * >       it reversed...
-   *
-   * Render "(optional)" when the field is optional and blank when
-   * it is required, instead of the conventional approach which is
-   * to render blank when input is optional and "(required)" when
-   * it's required.
-   *
-   * @property {boolean} requiredRev
-   */
-  requiredRev: { type: Boolean, required: false, default: false },
-
-  validateOnInput: { type: Boolean, required: false, default: false },
-});
+const props = defineProps(getWrapperProps());
 
 //  END:  Properties/attributes
 // --------------------------------------------------
@@ -216,6 +94,9 @@ const _hadFocus = ref(false);
 const _hasHelp = ref(false);
 const _showError = ref(false);
 const _descByIDs = ref(undefined);
+
+const wrapperTag = ref(null);
+const _blurWatcher = ref(null);
 
 //  END:  Local state
 // --------------------------------------------------
@@ -265,7 +146,7 @@ const _setDescByIDs = () => {
 const _initClog = () => {
   if (_cLog.value === null) {
     _cLog.value = new ConsoleLogger(
-      '<whole-input-field>',
+      '<accessible-whole-input>',
       props.id,
       {
         props,
@@ -278,6 +159,7 @@ const _initClog = () => {
           _showError,
         }
       },
+      false
     );
   }
 };
@@ -305,7 +187,7 @@ const _updateErrorMsg = (event) => {
     _errorMsg.value = (props.errorMsg !== '')
       ? props.errorMsg
       : event.target.validationMessage;
-    _showError.value = (_errorMsg !== '');
+    _showError.value = (_errorMsg.value !== '');
   } else {
     _errorMsg.value = '';
     _showError.value = false;
@@ -326,9 +208,9 @@ const _setHasError = () => {
 
   // Do we have an error message to show the user?
   _hasError.value = hasContent(slots, props, 'error', 'errorMsg') || customErr.value !== '';
-  _errorMsg = props.errorMsg;
+  _errorMsg.value = props.errorMsg;
 
-  if (oldHasError !== _hasError) {
+  if (oldHasError !== _hasError.value) {
     _errorChange.value = Date.now();
     _setDescByIDs();
   }
@@ -375,6 +257,25 @@ const onChange = (event) => {
 const onFocus = (event) => {
   _cLog.value.before('onFocus', { local: { event }, refs: ['_hadFocus'] });
   _hadFocus.value = true;
+
+  if (props.watchBlur === true) {
+    if (_blurWatcher.value === null && wrapperTag.value !== null) {
+      _blurWatcher.value = new ExternalBlur(
+        wrapperTag.value,
+        `${props.id}-wrapper`,
+        {
+          autoUnset: true,
+          collapsed: false,
+          doConsole: true,
+          listen: true,
+        },
+      );
+    }
+
+    if (_blurWatcher.listening === false) {
+      _blurWatcher.listen();
+    }
+  }
   _cLog.value.after('onFocus', { refs: ['_hadFocus'] });
 }
 
@@ -382,6 +283,8 @@ const onInput = (event) => {
   _cLog.value.before('onInput', { local: { event }, refs: ['_hadFocus'] });
 
   _hadFocus.value = true;
+
+  if (_)
 
   if (props.validateOnInput === true) {
     _updateErrorMsg(event);
