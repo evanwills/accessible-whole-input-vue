@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" ref="wrapperTag">
+  <component :class="wrapClass" :is="tag" ref="wrapperTag">
     <label v-if="!isCheckable" :for="id" :class="labelClass" data-tmp>
       {{ label }}
       <RequiredStr :required="required" :required-rev="requiredRev" />
@@ -43,14 +43,14 @@
 
     <!-- START: help-msg (bottom) -->
     <div v-if="(_hasHelp === true && helpFirst === false)" :class="helpClass" :id="getID('help')">
-      <slot name="help"><p>{{ helpTxt }}</p></slot>
+      <slot name="help"><p>{{ helpText }}</p></slot>
     </div>
     <!--  END:  help-msg (bottom) -->
   </component>
 </template>
 
 <script setup>
-import { onBeforeMount, ref, useSlots, watch } from 'vue';
+import { computed, onBeforeMount, ref, useSlots, watch } from 'vue';
 import { hasContent } from '../../../utils/vue-utils';
 import ConsoleLogger from '../../../utils/ConsoleLoggerDummy.class';
 import ExternalBlur from '../../../utils/ExternalBlur.class';
@@ -73,7 +73,15 @@ const emit = defineEmits(['updateDescByIDs']);
 // --------------------------------------------------
 // START: Properties/attributes
 
-const props = defineProps(getWrapperProps());
+const props = defineProps({
+  ...getWrapperProps(),
+
+  /**
+   * Whether or not the input is checkable
+   * (i.e. checkbox or radio input)
+   */
+  isCheckable: { type: Boolean, required: false, default: false },
+});
 
 //  END:  Properties/attributes
 // --------------------------------------------------
@@ -118,6 +126,31 @@ const getID = (suffix) => { // eslint-disable-line arrow-body-style
 //  END:  Computed helpers
 // --------------------------------------------------
 // START: Computed properties
+
+const helpClass = computed(
+  () => 'text-body-md text-grey-600 w-full max-w-md',
+);
+
+const labelClass = computed(() => {
+  let output = (props.largeLabel === true)
+    ? 'text-bold-lg'
+    : 'text-bold-md';
+
+  if (props.hideLabel === true) {
+    output += ' sr-only';
+  }
+
+  return `${output} box-border block`;
+});
+
+const wrapClass = computed(() => {
+  const tmp = 'whole-input';
+  const output = (props.isCheckable === true)
+    ? `${tmp}--checkable`
+    : '';
+
+  return `${tmp} ${output} flex flex-col gap-2`;
+});
 
 //  END:  Computed properties
 // --------------------------------------------------
