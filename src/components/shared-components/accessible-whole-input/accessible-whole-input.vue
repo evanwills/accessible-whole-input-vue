@@ -10,15 +10,15 @@
     </span>
 
     <!-- START: help-msg (top) -->
-    <div v-if="(_hasHelp === true && helpFirst === true)" :class="helpClass" :id="getID('help')">
-      <slot name="help"><p class="mb-0">{{ help }}</p></slot>
-    </div>
+    <HelpTxt v-if="helpFirst === true" :help="help" :id="getID('help')">
+      <template v-slot:help></template>
+    </HelpTxt>
     <!-- START: help-msg (top) -->
 
     <!-- START: error-msg -->
     <ErrorMsg
       v-if="(_showError === true || externalInvalid === true)
-        && (_hasError === true || extraError !== '')"
+        && (_hasError === true || _errorMsg !== '')"
       aria-live="polite"
       :external-invalid="externalInvalid"
       :extra-error="extraError"
@@ -42,9 +42,9 @@
     </div>
 
     <!-- START: help-msg (bottom) -->
-    <div v-if="(_hasHelp === true && helpFirst === false)" :class="helpClass" :id="getID('help')">
-      <slot name="help"><p>{{ helpText }}</p></slot>
-    </div>
+    <HelpTxt v-if="helpFirst === false" :help="help" :id="getID('help')">
+      <template v-slot:help></template>
+    </HelpTxt>
     <!--  END:  help-msg (bottom) -->
   </component>
 </template>
@@ -57,6 +57,7 @@ import ExternalBlur from '../../../utils/ExternalBlur.class';
 import ErrorMsg from './ErrorMsg.vue';
 import RequiredStr from './RequiredStr.vue';
 import { getWrapperProps } from './accessible-whole-input.utils';
+import HelpTxt from './HelpTxt.vue';
 
 // --------------------------------------------------
 // START: Vue utils
@@ -149,7 +150,7 @@ const wrapClass = computed(() => {
     ? `${tmp}--checkable`
     : '';
 
-  return `${tmp} ${output} flex flex-col gap-2`;
+  return `${tmp} ${output} flex flex-col gap-2 items-start`;
 });
 
 //  END:  Computed properties
@@ -175,27 +176,6 @@ const _setDescByIDs = () => {
     emit('updateDescByIDs', _descByIDs.value);
   }
 }
-
-const _initClog = () => {
-  if (_cLog.value === null) {
-    _cLog.value = new ConsoleLogger(
-      '<accessible-whole-input>',
-      props.id,
-      {
-        props,
-        refs: {
-          _currentValue,
-          _errorChange,
-          _errorMsg,
-          _hasError,
-          _hadFocus,
-          _showError,
-        }
-      },
-      false
-    );
-  }
-};
 
 /**
  *
@@ -240,7 +220,7 @@ const _setHasError = () => {
   const oldHasError = _hasError.value;
 
   // Do we have an error message to show the user?
-  _hasError.value = hasContent(slots, props, 'error', 'errorMsg') || customErr.value !== '';
+  _hasError.value = hasContent(slots, props, 'error', 'errorMsg');
   _errorMsg.value = props.errorMsg;
 
   if (oldHasError !== _hasError.value) {
@@ -248,6 +228,29 @@ const _setHasError = () => {
     _setDescByIDs();
   }
 }
+
+const _initClog = () => {
+  if (_cLog.value === null) {
+    _cLog.value = new ConsoleLogger(
+      '<accessible-whole-input>',
+      props.id,
+      {
+        props,
+        refs: {
+          _currentValue,
+          _errorChange,
+          _errorMsg,
+          _hasError,
+          _hadFocus,
+          _showError,
+        }
+      },
+      false
+    );
+
+    _setHasError();
+  }
+};
 
 //  END:  Local methods
 // --------------------------------------------------
@@ -259,6 +262,12 @@ onBeforeMount(() => {
   // Do we have a help text block to show the user?
   _hasHelp.value = hasContent(slots, props, 'help');
   _setDescByIDs();
+  console.group('<accessible-whole-input>');
+  console.log('props.externalInvalid:', props.externalInvalid);
+  console.log('props.errorMsg:', props.errorMsg);
+  console.log('_showError.value:', _showError.value);
+  console.log('_hasError.value:', _hasError.value);
+  console.groupEnd();
 })
 
 //  END:  Lifecycle events
@@ -327,6 +336,10 @@ const onInput = (event) => {
 }
 
 //  END:  Event handlers
+// --------------------------------------------------
+// START: Lifecycle events
+
+//  END:  Lifecycle events
 // --------------------------------------------------
 </script>
 

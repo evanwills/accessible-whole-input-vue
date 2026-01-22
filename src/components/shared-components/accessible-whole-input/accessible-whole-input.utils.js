@@ -55,14 +55,6 @@ export const getWrapperProps = () => ({
   helpFirst: { type: Boolean, required: false, default: false },
 
   /**
-   * Help text to show the user to make the purpose or
-   * requirements of the field clear
-   *
-   * @property {boolean} helpFirst
-   */
-  helpText: { type: String, required: false, default: '' },
-
-  /**
    * Whether or not to hide the label from screen.
    * (Label is still visible to screen readers)
    *
