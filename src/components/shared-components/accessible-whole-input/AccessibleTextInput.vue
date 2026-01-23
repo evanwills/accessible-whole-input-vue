@@ -215,6 +215,27 @@ const props = defineProps({
   label: { type: String, required: true },
 
   /**
+   * The maximum string length the user can enter into the input
+   * field. This must be an integer value of 0 or higher.
+   *
+   * (see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/text#maxlength)
+   *
+   * @property {boolean} multiLine
+   */
+  maxlength: { type: Number, required: false, default: undefined },
+
+  /**
+   * The minimum string length the user must enter into the input
+   * field. This must be a non-negative integer value smaller than
+   * or equal to the value specified by maxlength.
+   *
+   * (see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/text#minlength)
+   *
+   * @property {boolean} multiLine
+   */
+  minlength: { type: Number, required: false, default: undefined },
+
+  /**
    * Whether or not to allow user to enter multiple email addresses
    * in the one field;
    *
@@ -231,6 +252,35 @@ const props = defineProps({
    * @property {boolean} multiLine
    */
   multiLine: { type: Boolean, required: false, default: false },
+
+  /**
+   * JavaScript regular expression for validating string input
+   *
+   * __Note:__ `pattern` must not include delimiters and start & end
+   *           special characters. If your JavaScript RegExp is
+   *           `/^[A-Z][A-Za-z\d]{2,16}$/` then your `pattern`
+   *           attribute value would be `[A-Z][A-Za-z\d]{2,16}`
+   *
+   * (see
+   * [MDN `<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#pattern) &
+   * [MDN `<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea#pattern)
+   * for more info)
+   *
+   * @property {string} pattern
+   */
+  pattern: { type: String, required: false, default: '' },
+
+  /**
+   * Helper text to show inside input field when value is empty
+   *
+   * (see
+   * [MDN `<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#placeholder) &
+   * [MDN `<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea#placeholder)
+   * for more info)
+   *
+   * @property {string} placeholder
+   */
+  placeholder: { type: String, required: false, default: '' },
 
   /**
    * Whether or not the field is readonly
@@ -371,14 +421,14 @@ const _validation = ref(null);
 const inputClass = computed(() => {
   const tmp = `accessible-text-input`;
   const type = (props.multiLine === true)
-    ? 'single'
-    : 'multi';
+    ? 'multi'
+    : 'single';
 
   const border = (_hasError.value === true || props.externalInvalid === true)
     ? 'border-red-500'
     : 'border-grey-300';
 
-  let output = `${tmp} ${tmp}__${type}-inline border rounded ${border}`
+  let output = `${tmp} ${tmp}__${type}-line border rounded ${border}`
     + ' text-body-base leading-10 p-2 h-10 bg-white w-full max-w-md'
     + ' focus:outline focus:outline-primary-500 focus:outline-2'
     + ` focus:outline-offset-2 user-invalid:border-red-500`;
@@ -386,6 +436,8 @@ const inputClass = computed(() => {
   if (_hasError.value === true || props.externalInvalid === true) {
     output += ` ${tmp}--invalid`;
   }
+
+  _cLog.value.only('inputClass', { props: ['multiLine', 'externalInvalid'], refs: ['_hasError'], local: { tmp, type, border, output } });
 
   return output;
 })
@@ -439,11 +491,15 @@ const _initClog = () => {
           _hasError,
           _textAreaHeight,
           _validation,
+          inputClass,
           inputPattern,
+          inputPlaceholder,
           inputType,
+          inputValOnInput,
           textareaStyle,
         }
       },
+      false,
     );
   }
   _validation.value = getValidation(props.validationType);

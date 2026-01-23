@@ -260,6 +260,11 @@ export const getTextFieldProps = () => ({
   /**
    * JavaScript regular expression for validating string input
    *
+   * __Note:__ `pattern` must not include delimiters and start & end
+   *           special characters. If your JavaScript RegExp is
+   *           `/^[A-Z][A-Za-z\d]{2,16}$/` then your `pattern`
+   *           attribute value would be `[A-Z][A-Za-z\d]{2,16}`
+   *
    * (see
    * [MDN `<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#pattern) &
    * [MDN `<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea#pattern)

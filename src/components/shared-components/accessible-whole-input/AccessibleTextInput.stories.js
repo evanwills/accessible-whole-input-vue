@@ -115,5 +115,6 @@ export const MultiLine = {
     id: 'multi-line-text-input',
     label: 'Multi-line Input (textarea)',
     tag: 'div',
+    multiLine: true,
   },
 };
