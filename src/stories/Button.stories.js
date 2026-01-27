@@ -42,3 +42,10 @@ export const Small = {
     label: 'Button',
   },
 };
+
+export const DummyStory = {
+  args:{
+    primary:false,
+    label:"Button"
+  }
+};

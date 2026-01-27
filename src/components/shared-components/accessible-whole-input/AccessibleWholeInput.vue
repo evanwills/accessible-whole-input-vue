@@ -1,6 +1,6 @@
 <template>
   <component :class="wrapClass" :is="tag" ref="wrapperTag">
-    <label v-if="!isCheckable" :for="id" :class="labelClass" data-tmp>
+    <label v-if="!group" :for="id" :class="labelClass">
       {{ label }}
       <RequiredStr :required="required" :required-rev="requiredRev" />
     </label>
@@ -19,7 +19,6 @@
     <ErrorMsg
       v-if="(_showError === true || externalInvalid === true)
         && (_hasError === true || _errorMsg !== '')"
-      aria-live="polite"
       :external-invalid="externalInvalid"
       :extra-error="extraError"
       :has-error="_hasError"
@@ -325,8 +324,6 @@ const onInput = (event) => {
   _cLog.value.before('onInput', { local: { event }, refs: ['_hadFocus'] });
 
   _hadFocus.value = true;
-
-  if (_)
 
   if (props.validateOnInput === true) {
     _updateErrorMsg(event);

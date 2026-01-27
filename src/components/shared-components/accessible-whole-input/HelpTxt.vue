@@ -1,6 +1,7 @@
 <template>
   <div
     v-if="_hasHelp === true"
+    :id="id"
     class="text-body-md text-grey-600 w-full max-w-md">
     <slot><p class="mb-0">{{ help }}</p></slot>
   </div>
@@ -26,6 +27,12 @@ const props = defineProps({
    * @property {string} help
    */
   help: { type: String, required: false, default: '' },
+
+  /**
+   * ID to be used in the `aria-describedby` attribute to link the
+   * help text to the input field.
+   */
+  id: { type: String, required: true },
 });
 
 //  END:  Properties/attributes

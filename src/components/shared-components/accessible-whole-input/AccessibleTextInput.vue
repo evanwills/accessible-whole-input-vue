@@ -48,7 +48,7 @@
 import { computed, ref, onBeforeMount } from 'vue';
 // import { getGenericFieldProps, getTextFieldProps, getWrapperProps } from './accessible-whole-input.utils';
 import ConsoleLogger from '../../../utils/ConsoleLogger.class'
-import AccessibleWholeInput from './accessible-whole-input.vue';
+import AccessibleWholeInput from './AccessibleWholeInput.vue';
 import { getAttr, getValidation } from './validators';
 
 // --------------------------------------------------
@@ -75,8 +75,8 @@ const props = defineProps({
    * browser.
    *
    * For more info on `autocomplete` see
-   * https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete &
-   * https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete#token_list_tokens
+   * [autocomplete (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) &
+   * [autocomplete tokens (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete#token_list_tokens)
    *
    * @property {string} autocomplete
    */
@@ -239,7 +239,7 @@ const props = defineProps({
    * Whether or not to allow user to enter multiple email addresses
    * in the one field;
    *
-   * (see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/email#additional_attributes)
+   * (see [email - multiple (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/email#multiple))
    *
    * @property {boolean} multiLine
    */

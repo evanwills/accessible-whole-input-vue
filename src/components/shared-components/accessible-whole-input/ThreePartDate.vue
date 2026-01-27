@@ -9,6 +9,7 @@
         class="text-bold-lg"
         :for="getID('day')">Day</label>
       <input
+        :autocomplete="autocompleteField('day')"
         :class="getInputClass('day')"
         :disabled="disabled"
         :id="getID('day')"
@@ -23,7 +24,7 @@
         :value="_output.day"
         v-on:focus="handleFocus"
         v-on:change="handleChange($event, 'day')"
-        v-on:keyup="sanitise($event, 'day')" />
+        v-on:input="sanitise($event, 'day')" />
     </li>
     <li
       class="flex flex-col gap-y-1">
@@ -31,6 +32,7 @@
         class="text-bold-lg"
         :for="getID('month')">Month</label>
       <input
+        :autocomplete="autocompleteField('month')"
         :class="getInputClass('month')"
         :disabled="disabled"
         :id="getID('month')"
@@ -45,14 +47,15 @@
         :value="_output.month"
         v-on:focus="handleFocus"
         v-on:change="handleChange($event, 'month')"
-        v-on:keyup="sanitise($event, 'month')" />
+        v-on:input="sanitise($event, 'month')" />
     </li>
     <li
-      class="flex flex-col gap-y-1">
+      class="flex flex-col gap-y-1 grow-0 shrink-1">
       <label
         class="text-bold-lg"
-        :for="getID('Year')">Year</label>
+        :for="getID('year')">Year</label>
       <input
+        :autocomplete="autocompleteField('year')"
         :class="getInputClass('year')"
         :disabled="disabled"
         :id="getID('year')"
@@ -67,7 +70,7 @@
         :value="_output.year"
         v-on:focus="handleFocus"
         v-on:change="handleChange($event, 'year')"
-        v-on:keyup="sanitise($event, 'year')" />
+        v-on:input="sanitise($event, 'year')" />
     </li>
   </ul>
 </template>
@@ -98,6 +101,19 @@ const emit = defineEmits(['change', 'error']);
 
 const props = defineProps({
   /**
+   * All standard HTML input fields allow an `autocomplete` attribute.
+   * Use "off" to prevent standard inputs being autocompleted by the
+   * browser.
+   *
+   * For more info on `autocomplete` see
+   * [autocomplete (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) &
+   * [autocomplete tokens (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete#token_list_tokens)
+   *
+   * @property {string} autocomplete
+   */
+  autocomplete: { type: String, required: false, default: 'off' },
+
+  /**
    * Whether or not to step the users' input focus to the next field
    * when they've entered a value that's valid for that input field
    *
@@ -108,6 +124,7 @@ const props = defineProps({
   describedBy: { type: String, required: false, default: '' },
 
   disabled: { type: Boolean, required: false, default: false },
+
   /**
    * By default ThreePartDate change events supplies date string as
    * a full ISO8601 date-time string (e.g. "2025-08-19T00:00:00").
@@ -185,6 +202,7 @@ const _hadFocus = ref({
   month: false,
   year: false,
 });
+const _wholeInvalid = ref(false);
 const _maxDay = ref(31);
 const _placeholder = ref({
   day: 15,
@@ -195,7 +213,7 @@ const threePartDateWrap = ref(null);
 const externalBlur = ref(null);
 
 const inpClass = 'text-base rounded leading-10 pl-2 py-2 h-10 '
-    + 'bg-white border border-grey-300 '
+    + 'bg-white border border-grey-300 user-invalid:border-red-500'
     + 'focus:outline focus:outline-primary-500 focus:outline-2 '
     + 'focus:outline-offset-2';
 
@@ -213,9 +231,20 @@ const yearInput = ref(null);
 
 const _focusCount = computed(() => getTrueCount(_hadFocus.value));
 
+const _isInvalid = computed(() => (_wholeInvalid.value === true
+  && _hadFocus.value.day === true
+  && _hadFocus.value.month === true
+  && _hadFocus.value.year === true));
+
 //  END:  Computed properties
 // --------------------------------------------------
 // START: Local methods
+
+const autocompleteField = (field) => {
+  return (props.autocomplete === 'bday')
+    ? `bday-${field}`
+    : undefined;
+};
 
 const dateIsValid = (parts, force = false) => {
   const tmp = getDateError(parts, _min.value, _max.value);
@@ -259,37 +288,39 @@ const dateIsValid = (parts, force = false) => {
 const getID = (field) => `${props.fieldId}--${field}`;
 
 const getInputClass = (prop) => {
-  const suffix = (isNum(_output.value[prop]))
-    ? 'user-invalid:border-red-500'
+  const invalid = (_isInvalid.value === true || _invalid.value[prop] === true)
+    ? ' border-red-500'
     : '';
 
   const len = (prop === 'year')
-    ? '16 shrink'
-    : 16;
+    ? '16 shrink-1 grow-0'
+    : '12';
 
-  return `${inpClass} text-base ${suffix} w-${len} `
+  return `${inpClass} text-base ${invalid} w-${len} `
     + 'text-center -indent-2 NO-INNER-SPIN';
 };
 
 const setMinMax = () => {
-  if (props.min > props.max) {
-    // min and max have been reversed. This will break validation so
-    // we'll reverse it back;
-    console.warn(
-      `<three-part-date id="${props.fieldId}">.setInitial() expects `
-      + 'min attribute to be less than max attribute',
-    );
-    const tmpYear = _maxYear.value;
-    _maxYear.value = _minYear.value;
-    _minYear.value = tmpYear;
-    _min.value = props.max;
-    _max.value = props.min;
-  }
+  if (_min.value instanceof Date && _max.value instanceof Date) {
+    if (props.min > props.max) {
+      // min and max have been reversed. This will break validation so
+      // we'll reverse it back;
+      console.warn(
+        `<three-part-date id="${props.fieldId}">.setInitial() expects `
+        + 'min attribute to be less than max attribute',
+      );
+      const tmpYear = _maxYear.value;
+      _maxYear.value = _minYear.value;
+      _minYear.value = tmpYear;
+      _min.value = props.max;
+      _max.value = props.min;
+    }
 
-  _placeholder.value = getDateParts(
-    (_max.value.getTime() - ((_max.value.getTime() - _min.value.getTime()) / 2)),
-    _placeholder.value,
-  );
+    _placeholder.value = getDateParts(
+      (_max.value.getTime() - ((_max.value.getTime() - _min.value.getTime()) / 2)),
+      _placeholder.value,
+    );
+  }
 };
 
 const setPlacehoderByPartial = () => {
@@ -309,18 +340,21 @@ const setPlacehoderByPartial = () => {
   _placeholder.value = getDateParts(when, _placeholder.value);
 };
 
-const initExternalBlur = () => {
+const initExternalBlur = (listen = false) => {
   if (externalBlur.value === null && threePartDateWrap.value !== null) {
     externalBlur.value = new ExternalBlur(
       threePartDateWrap.value,
       props.fieldId,
       {
         autoUnset: true,
-        doConsole: false,
+        doConsole: true ,
         collapsed: false,
-        listen: true,
       },
     );
+  }
+
+  if (listen === true) {
+    externalBlur.value.listen();
   }
 };
 
@@ -351,6 +385,7 @@ const setInitial = () => {
           _maxDay,
           _output,
           _placeholder,
+          _wholeInvalid,
         },
       },
       false,
@@ -418,16 +453,37 @@ const handleChange = (event, prop) => {
 
 const sanitise = (event, prop) => {
   const focus = {
-    day: { node: monthInput, min: 3, regex: /^(?:[02]?\d|3[01])$/ },
+    day: { node: monthInput, min: 3, regex: /^(?:[012]?\d|3[01])$/ },
     month: { node: yearInput, min: 1, regex: /^(?:0?\d|1[0-2])$/ },
   };
+  // _cLog.value.before(
+  //   'sanitise',
+  //   {
+  //     local: {
+  //       event,
+  //       eventType: event.type,
+  //       eventKey: event.key,
+  //       eventTargetValue: event.target.valueAsNumber,
+  //       prop,
+  //       focus,
+  //       doAutoFocus: (props.autoFocusNext === true),
+  //       focusPropExists: (typeof focus[prop] !== 'undefined'),
+  //       inputIsValid: (event.target.checkValidity() === true),
+  //       inputKeyIsNum: (isNum(event.key) === true),
+  //       inputIsGreaterThanMin: (event.target.valueAsNumber > focus[prop].min),
+  //       validationRegex: (focus[prop].regex),
+  //       inputPassesRegex: (focus[prop].regex.test(event.target.value) === true),
+  //     },
+  //     props: [`autoFocusNext`],
+  //     refs: [`_hadFocus.${prop}`],
+  //   },
+  // );
 
   _hadFocus.value[prop] = true;
 
   if (props.autoFocusNext === true
     && typeof focus[prop] !== 'undefined'
     && event.target.checkValidity() === true
-    && isNum(event.key) === true
     && event.target.valueAsNumber > focus[prop].min
     && focus[prop].regex.test(event.target.value) === true
   ) {
@@ -436,10 +492,12 @@ const sanitise = (event, prop) => {
     // eslint-disable-next-line no-param-reassign
     event.target.value = event.target.value.replace(/\D+/g, '');
   }
+  _invalid.value[prop] = event.target.checkValidity() === false;
+  // _cLog.value.after('sanitise', { refs: [`_hadFocus.${prop}`] });
 };
 
 const handleFocus = () => {
-  initExternalBlur();
+  initExternalBlur(true);
 };
 
 //  END:  Event handlers

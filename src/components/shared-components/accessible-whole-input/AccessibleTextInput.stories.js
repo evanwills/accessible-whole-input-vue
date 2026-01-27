@@ -1,13 +1,14 @@
 // import { fn } from 'storybook/test';
 
-import AccessibleTextInput from './accessible-text-input.vue';
+import AccessibleTextInput from './AccessibleTextInput.vue';
 // import AccessibleTextInput from '../components/shared-components/accessible-whole-input/accessible-text-input.vue';
 
 export default {
   component: AccessibleTextInput,
-  title: 'AccessibleTextInput',
+  title: 'Components/Form inputs/AccessibleTextInput',
   // description: 'blah',
   tags: ['autodocs'],
+  decorators: [() => ({ template: '<ul><story/></ul>' })],
   argTypes: {
   //   autocomplete: { control: { type: 'text' } },
   //   autoExpand: { control: { type: 'boolean' } },
@@ -46,7 +47,6 @@ export const Default = {
   args: {
     id: 'basic-text-input',
     label: 'Text input',
-    tag: 'div',
   },
 };
 
@@ -56,7 +56,6 @@ export const Optional = {
     label: 'Optional input',
     required: false,
     requiredRev: true,
-    tag: 'div',
   },
 };
 
@@ -65,7 +64,6 @@ export const Required = {
     id: 'required-text-input',
     label: 'Required input [Standard]',
     required: true,
-    tag: 'div',
   },
 };
 
@@ -75,7 +73,6 @@ export const RequiredRev = {
     label: 'Required input [reverse]',
     required: true,
     requiredRev: true,
-    tag: 'div',
   },
 };
 
@@ -84,7 +81,6 @@ export const Help = {
     id: 'help-last-text-input',
     help: 'This is some help text',
     label: 'Input with help',
-    tag: 'div',
   },
 };
 
@@ -94,7 +90,6 @@ export const HelpFirst = {
     helpFirst: true,
     id: 'help-first-text-input',
     label: 'Input with help (first)',
-    tag: 'div',
   },
 };
 
@@ -105,7 +100,6 @@ export const ExternalInvalid = {
     externalInvalid: true,
     id: 'external-invalid-text-input',
     label: 'Input with external invalid',
-    tag: 'div',
   },
 };
 
@@ -114,7 +108,6 @@ export const MultiLine = {
   args: {
     id: 'multi-line-text-input',
     label: 'Multi-line Input (textarea)',
-    tag: 'div',
     multiLine: true,
   },
 };

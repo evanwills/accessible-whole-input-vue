@@ -68,6 +68,22 @@ button:focus-visible {
   text-align: center;
 }
 
+/**
+   * `.NO-INNER-SPIN` removes the visible up/down arrows rendered
+   * number inputs
+   */
+
+input.NO-INNER-SPIN {
+  -moz-appearance: textfield;
+  &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+    opacity: 0;
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

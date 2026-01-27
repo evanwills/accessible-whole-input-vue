@@ -3,39 +3,6 @@
  * performing common actions that are shared across components
  */
 
-export const formatDate = (isoDate, shortMonth = false) => {
-  const tmp = (typeof isoDate === 'string')
-    ? new Date(isoDate)
-    : isoDate;
-
-  if ((tmp instanceof Date) === false || tmp.toString() === 'Invalid Date') {
-    throw new Error('formatDate() could not convert input into a (valid) Date object');
-  }
-
-  const month = (shortMonth === true)
-    ? 'short'
-    : 'long';
-
-  return tmp.toLocaleDateString(
-    'en-AU',
-    { day: 'numeric', month, year: 'numeric' },
-  );
-};
-
-export const santisePhone = (input) => {
-  if (typeof input !== 'string') {
-    return null;
-  }
-  const phone = input.replace(/\D+/g, '');
-  const pre = phone.substring(0, 2);
-
-  const regex = (/0[45]|1\d/.test(pre))
-    ? /(0[45]\d{2}|1\d00)(\d{3})(\d{3})/
-    : /(0[1-36-9])(\d{4})(\d{4})/;
-
-  return { phone, regex };
-};
-
 /**
  * Make an Australian phone number human readable
  *

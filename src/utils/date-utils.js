@@ -1,10 +1,5 @@
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import utc from 'dayjs/plugin/utc';
 import { isNonEmptyStr, isNum } from './data-utils';
 
-dayjs.extend(customParseFormat);
-dayjs.extend(utc);
 const months = [
   'January',
   'February',
@@ -75,7 +70,7 @@ export const humanDate = (isoDate, shortMonth = false) => {
     : isoDate;
 
   if ((tmp instanceof Date) === false || tmp.toString() === 'Invalid Date') {
-    throw new Error('formatDate() could not convert input into a (valid) Date object');
+    throw new Error('humanDate() could not convert input into a (valid) Date object');
   }
 
   const month = (shortMonth === true)
@@ -107,11 +102,39 @@ export const daysInMonth = (month, year) => new Date(year, month, 0).getDate();
  *                        Default: 'D MMMM YYYY'
  * @returns
  */
-export const formatDate = (
-  date,
-  format = 'YYYY-MM-DD',
-  output = 'D MMMM YYYY',
-) => dayjs.utc(date, format).format(output);
+
+export const formatDate = (isoDate, shortMonth = false) => {
+  const tmp = (typeof isoDate === 'string')
+    ? new Date(isoDate)
+    : isoDate;
+
+  if ((tmp instanceof Date) === false || tmp.toString() === 'Invalid Date') {
+    throw new Error('formatDate() could not convert input into a (valid) Date object');
+  }
+
+  const month = (shortMonth === true)
+    ? 'short'
+    : 'long';
+
+  return tmp.toLocaleDateString(
+    'en-AU',
+    { day: 'numeric', month, year: 'numeric' },
+  );
+};
+
+export const santisePhone = (input) => {
+  if (typeof input !== 'string') {
+    return null;
+  }
+  const phone = input.replace(/\D+/g, '');
+  const pre = phone.substring(0, 2);
+
+  const regex = (/0[45]|1\d/.test(pre))
+    ? /(0[45]\d{2}|1\d00)(\d{3})(\d{3})/
+    : /(0[1-36-9])(\d{4})(\d{4})/;
+
+  return { phone, regex };
+};
 
 export const getMonths = () => months;
 

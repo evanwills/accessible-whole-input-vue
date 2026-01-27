@@ -12,15 +12,19 @@
     :label="label"
     :tag="tag"
     :validate-on-input="inputValOnInput">
+    <ThreePartDate
+      v-if="temporalType === '3date'"
+      :autocomplete="autocomplete"
+      :field-id="id" />
     <input
-      v-if="temporalType !== '3date'"
+      v-else
+      :autocomplete="autocomplete"
       :class="inputClass"
       :disabled="disabled"
       :id="id"
-      :maxlength="maxlength"
-      :minlength="minlength"
-      :multiple="multiple"
-      :pattern="inputPattern"
+      :list="listID"
+      :max="max"
+      :min="min"
       :placeholder="inputPlaceholder"
       :readonly="readonly"
       :required="required"
@@ -28,6 +32,7 @@
       :type="temporalType"
       :value="value"
       v-on:input="handleInput" />
+
   </AccessibleWholeInput>
 </template>
 
@@ -35,8 +40,9 @@
 import { computed, ref, onBeforeMount } from 'vue';
 // import { getGenericFieldProps, getTextFieldProps, getWrapperProps } from './accessible-whole-input.utils';
 import ConsoleLogger from '../../../utils/ConsoleLogger.class'
-import AccessibleWholeInput from './accessible-whole-input.vue';
+import AccessibleWholeInput from './AccessibleWholeInput.vue';
 import { getAttr, getValidation } from './validators';
+import ThreePartDate from './ThreePartDate.vue';
 
 // --------------------------------------------------
 // START: Vue utils
@@ -62,8 +68,8 @@ const props = defineProps({
    * browser.
    *
    * For more info on `autocomplete` see
-   * https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete &
-   * https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete#token_list_tokens
+   * [`autocomplete` (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) &
+   * [autocomplete tokens (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete#token_list_tokens)
    *
    * @property {string} autocomplete
    */
@@ -201,7 +207,44 @@ const props = defineProps({
    */
   label: { type: String, required: true },
 
+  /**
+   * ID of the `<datalist>` element that provides a list of
+   * predefined values to suggest to the user
+   *
+   * __Note:__ `list` is only used by `time` fields
+   *
+   * (See
+   * [time - `list` (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/time#list))
+   * for more info)
+   *
+   * @property {string} lists
+   */
+  list: { type: String, required: false, default: '' },
+
+  /**
+   * ISO8601 date, time or date-time string representing the maximum
+   * value allowed for the temproal field
+   *
+   * (See
+   * [date - `max` (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/date#max),
+   * [datetime-local - `max` (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/datetime-local#max)
+   * [time - `max` (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/time#max))
+   *
+   * @property {string} max
+   */
   max: { type: String, required: false, default: '' },
+
+  /**
+   * ISO8601 date, time or date-time string representing the maximum
+   * value allowed for the temproal field
+   *
+   * (See
+   * [date - `min` (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/date#min),
+   * [datetime-local - `min` (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/datetime-local#inx)
+   * [time - `min` (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/time#inx))
+   *
+   * @property {string} max
+   */
   min: { type: String, required: false, default: '' },
 
   /**
@@ -355,6 +398,12 @@ const _validation = ref(null);
 // --------------------------------------------------
 // START: Computed helpers
 
+const listID = computed(() => {
+  return (props.mode === 'time' && props.list.trim() !== '')
+    ? props.list
+    : undefined;
+});
+
 const temporalType = computed(() => {
   if (allowedModes.has(props.mode) === false) {
     return 'date';
@@ -365,7 +414,7 @@ const temporalType = computed(() => {
       return 'datetime-local';
 
     default:
-      props.mode;
+      return props.mode;
   }
 });
 

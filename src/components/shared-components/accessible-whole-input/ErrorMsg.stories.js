@@ -1,0 +1,39 @@
+import ErrorMsg from "./ErrorMsg.vue";
+
+export default {
+  component: ErrorMsg,
+  title: 'Components/Form inputs/Utility components/ErrorMsg',
+  tags: ['autodocs'],
+
+  parameters: {
+    docs: {
+      description: {
+        component: 'ErrorMsg is a simple component within the `<accessible-whole-input>` component for rendering user input field error messages.__Note:__ If you need complex HTML in your error message, use either the `default` slot or the `extraError` attribute'
+      },
+    }
+  },
+};
+
+export const Default = {
+  args: {
+    id: 'simple-error',
+    text: 'You did something wrong',
+    show: true,
+  }
+};
+
+export const HTMLError = {
+  args: {
+    id: 'simple-error',
+    extraError: 'You did something <a href="#">wrong</a>',
+    show: true,
+  }
+};
+
+export const HiddenError = {
+  args:{
+    id: "simple-error",
+    extraError: "You did something <a href=\"#\">wrong</a>",
+    show: false
+  }
+};

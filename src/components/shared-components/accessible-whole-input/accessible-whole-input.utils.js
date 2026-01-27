@@ -1,3 +1,20 @@
+import { isObj } from "../../../utils/data-utils";
+
+export const propsToPropValues = (...data) => {
+  const output = {};
+  console.log('data:', data);
+
+  for (const arg of data) {
+    if (isObj(arg)) {
+      for (const key of Object.keys(arg)) {
+        output[key] = arg[key].default;
+      }
+    }
+  }
+
+  return output;
+};
+
 export const getWrapperProps = () => ({
   /**
    * Error message to show the user when the value of the field is
@@ -227,6 +244,19 @@ export const getGenericFieldProps = (valueIsNumber = false) => ({
 });
 
 export const getTextFieldProps = () => ({
+  /**
+   * All standard HTML input fields allow an `autocomplete` attribute.
+   * Use "off" to prevent standard inputs being autocompleted by the
+   * browser.
+   *
+   * For more info on `autocomplete` see
+   * [autocomplete (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) &
+   * [autocomplete tokens (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete#token_list_tokens)
+   *
+   * @property {string} autocomplete
+   */
+  autocomplete: { type: String, required: false, default: 'off' },
+
   /**
    * Maximum number of characters user can enter into this field
    *

@@ -1,11 +1,19 @@
 // import { fn } from 'storybook/test';
 
-import AccessibleWholeInput from '../components/shared-components/accessible-whole-input/accessible-whole-input.vue';
+import AccessibleWholeInput from './AccessibleWholeInput.vue';
 
 export default {
   component: AccessibleWholeInput,
-  title: 'AccessibleWholeInput',
+  title: 'Components/Form inputs/Wrapper/AccessibleWholeInput',
+  decorators: [() => ({ template: '<ul><story/></ul>' })],
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: "`<AccessibleWholeInput>` provides the wrapper to make input fields accessible, by adding a label, help text, error messages and appropriate aria attributes where required"
+      }
+    }
+  },
   // argTypes: {
   //   autocomplete: { control: { type: 'text' } },
   //   autoExpand: { control: { type: 'boolean' } },
@@ -40,3 +48,16 @@ export default {
   // args: { onInput: fn() },
 }
 
+export const Default = {
+  args: {
+    id: 'accessible-input-wrapper',
+    label: 'Accessible input wrapper',
+  },
+  render: (args) => ({
+    component: { AccessibleWholeInput },
+    setup() {
+      return args;
+    },
+    template: `<accessible-whole-input :id="id" :label="label" v-bind="args">(default slot: input fields)</accessible-whole-input>`
+  }),
+};
