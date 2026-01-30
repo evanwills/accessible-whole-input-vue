@@ -67,9 +67,9 @@ export const getWrapperProps = () => ({
   /**
    * Whether or not to render help text before or after input field
    *
-   * @property {boolean} helpFirst
+   * @property {boolean} helpLast
    */
-  helpFirst: { type: Boolean, required: false, default: false },
+  helpLast: { type: Boolean, required: false, default: false },
 
   /**
    * Whether or not to hide the label from screen.

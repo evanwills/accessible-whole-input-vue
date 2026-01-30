@@ -1,9 +1,6 @@
 // import { fn } from 'storybook/test';
 
 import AccessibleTemporalInput from './AccessibleTemporalInput.vue';
-import { getGenericFieldProps, getWrapperProps, propsToPropValues } from './accessible-whole-input.utils';
-// import AccessibleTextInput from '../components/shared-components/accessible-whole-input/accessible-text-input.vue';
-
 
 export default {
   component: AccessibleTemporalInput,

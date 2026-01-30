@@ -1,0 +1,40 @@
+/**
+  * .good-grid works much like the Tailwind classes `grid-cols-X`.
+  * However, unlike the tailwind classes, it allows you to set a
+  * minimum column width that can match the design.
+  *
+  * Also, unlike `grid-cols-X`, it will work on all screen sizes
+  * (and container sizes) without any additional media queries or
+  * container queries.
+  *
+  * __Note:__ This technique has been supported in
+  *   * FF V76 (May 2020) (Adroid - V79 July 2020)
+  *   * Chrome V57 (March 2017 - both desktop & Android)
+  *   * Safari V10.1 (March 2017 - both OSX & iOS)
+  *   * Edge V16 (October 2017)
+  *
+  * See: [minmax](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/minmax)
+  *      [repeat](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/repeat)
+  *
+  * I found this technique watching a video by
+  * [Kevin Powell](https://www.youtube.com/@KevinPowell:
+  * [The magic of auto-fit and auto-fill... ](https://www.youtube.com/watch?v=OZ6qKoq7RJU)
+  */
+
+.good-grid-base {
+  @apply grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--min-col-width), 100%), 1fr));
+}
+
+.good-grid-cols-1 { --min-col-width: 100%; }
+.good-grid-cols-2 { --min-col-width: 35rem; }
+.good-grid-cols-3 { --min-col-width: 23rem; }
+.good-grid-cols-4 { --min-col-width: 16.75rem; }
+.good-grid-cols-5 { --min-col-width: 13.125rem; }
+.good-grid-cols-6 { --min-col-width: 10.625rem; }
+
+.good-grid { @apply good-grid-base gap-x-4 gap-y-8 lg:gap-x-6; }
+.good-grid-extra { @apply good-grid-base gap-x-4 gap-y-10 lg:gap-x-6; }
+.good-grid-row { @apply good-grid-base gap-4 lg:gap-6; }
+.good-grid-row-extra { @apply good-grid-base gap-x-4 gap-y-7 lg:gap-x-6 lg:gap-y-10; }

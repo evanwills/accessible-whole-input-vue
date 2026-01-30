@@ -1,27 +1,5 @@
 <template>
   <ul>
-    <AccessibleWholeInput
-      id="vite-vue"
-      help-first
-      label="Accessible Whole Input"
-      validate-on-input
-      watch-blur
-      v-on:updateDescByIDs="updateDescBy"
-      v-on:externalblur="onExternalBlur">
-      <template v-slot:default>
-        <input
-          :aria-describedby="descBy"
-          type="text"
-          id="vite-vue"
-          pattern="[A-Z][a-z\d]+\d"
-          value="chicken"
-          v-on:change="onChange"
-          v-on:input="onInput" />
-      </template>
-      <template v-slot:help>
-        This is some help text
-      </template>
-    </AccessibleWholeInput>
     <AccessibleTextInput
       id="name"
       error-msg="Please enter your name"
@@ -37,8 +15,8 @@
 
 <script setup>
 import { onBeforeMount, ref } from 'vue';
-import AccessibleWholeInput from './components/shared-components/accessible-whole-input/accessible-whole-input.vue';
-import AccessibleTextInput from './components/shared-components/accessible-whole-input/accessible-text-input.vue';
+import AccessibleWholeInput from './components/shared-components/accessible-whole-input/AccessibleWholeInput.vue';
+import AccessibleTextInput from './components/shared-components/accessible-whole-input/AccessibleTextInput.vue';
 
 const descBy = ref(undefined);
 const externalInvalid = ref(false);

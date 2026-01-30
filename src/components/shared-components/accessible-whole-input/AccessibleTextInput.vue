@@ -22,6 +22,7 @@
       :pattern="inputPattern"
       :placeholder="inputPlaceholder"
       :readonly="readonly"
+      ref="_textarea"
       :style="textareaStyle"
       :tabindex="tabindex"
       v-on:input="handleInput">{{ value }}</textarea>
@@ -45,11 +46,12 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount } from 'vue';
+import { computed, ref, onBeforeMount, onMounted } from 'vue';
 // import { getGenericFieldProps, getTextFieldProps, getWrapperProps } from './accessible-whole-input.utils';
 import ConsoleLogger from '../../../utils/ConsoleLogger.class'
 import AccessibleWholeInput from './AccessibleWholeInput.vue';
 import { getAttr, getValidation } from './validators';
+import { px2rems } from '../../../utils/general-utils';
 
 // --------------------------------------------------
 // START: Vue utils
@@ -409,10 +411,13 @@ const _currentValue = ref('');
 
 const _errorChange = ref(0);
 const _errorMsg = ref('');
+const _firstResize = ref(true);
 const _hasError = ref(false);
 
+const _textarea = ref(null);
 const _textAreaHeight = ref(null);
 const _validation = ref(null);
+
 
 //  END:  Local state
 // --------------------------------------------------
@@ -424,12 +429,16 @@ const inputClass = computed(() => {
     ? 'multi'
     : 'single';
 
+  const height = (props.multiLine === true)
+    ? 'leading-5 h-20'
+    : 'leading-10 h-10';
+
   const border = (_hasError.value === true || props.externalInvalid === true)
     ? 'border-red-500'
     : 'border-grey-300';
 
-  let output = `${tmp} ${tmp}__${type}-line border rounded ${border}`
-    + ' text-body-base leading-10 p-2 h-10 bg-white w-full max-w-md'
+  let output = `${tmp} ${tmp}__${type}-line border ${border} ${height}`
+    + ' rounded text-body-base p-2 h-10 bg-white w-full max-w-md'
     + ' focus:outline focus:outline-primary-500 focus:outline-2'
     + ` focus:outline-offset-2 user-invalid:border-red-500`;
 
@@ -452,6 +461,9 @@ const inputType = computed(() => {
   }
   if (new Set(['email', 'url']).has(props.validationType)) {
     return props.validationType;
+  }
+  if (props.validationType.includes('phone')) {
+    return 'tel';
   }
 
   return 'text';
@@ -488,7 +500,9 @@ const _initClog = () => {
           _currentValue,
           _errorChange,
           _errorMsg,
+          _firstResize,
           _hasError,
+          _textarea,
           _textAreaHeight,
           _validation,
           inputClass,
@@ -507,6 +521,31 @@ const _initClog = () => {
 
 const setType = () => {}
 
+const resizeTextarea = (node) => {
+  if (props.autoExpand === true) {
+    _firstResize.value = false;
+
+    const { clientHeight, scrollHeight } = node;
+
+    if (scrollHeight > clientHeight) {
+      let newHeight = px2rems(clientHeight);
+
+      const oldHeight = (_textAreaHeight.value === null)
+        ? clientHeight
+        : _textAreaHeight.value;
+
+
+      if (scrollHeight > oldHeight) {
+        newHeight = px2rems(scrollHeight);
+      }
+
+      _textAreaHeight.value = (newHeight - 0.3);
+    }
+  } else if (_textAreaHeight.value !== null) {
+    _textAreaHeight.value = null;
+  }
+};
+
 //  END:  Local methods
 // --------------------------------------------------
 // START: Watcher methods
@@ -516,26 +555,7 @@ const setType = () => {}
 // START: Event handlers
 
 const handleInput = (event) => {
-  if (props.autoExpand === true) {
-    const { clientHeight, scrollHeight } = event.target;
-    let newHeight = null;
-
-    if (scrollHeight > clientHeight) {
-      const oldHeight = (_textAreaHeight.value === null)
-        ? clientHeight
-        : _textAreaHeight.value;
-
-      const tmp = Math.round((scrollHeight / 16) * 100) / 100;
-
-      if (tmp > oldHeight) {
-        newHeight = tmp;
-      }
-    }
-
-    _textAreaHeight.value = newHeight;
-  } else if (_textAreaHeight.value !== null) {
-    _textAreaHeight.value = null;
-  }
+  resizeTextarea(event.target);
 };
 
 //  END:  Event handlers
@@ -544,6 +564,12 @@ const handleInput = (event) => {
 
 onBeforeMount(() => {
   _initClog();
+})
+
+onMounted(() => {
+  if (_firstResize.value === true && _textarea.value !== null) {
+    resizeTextarea(_textarea.value);
+  }
 })
 
 //  END:  Lifecycle events

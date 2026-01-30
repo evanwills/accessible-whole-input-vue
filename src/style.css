@@ -1,4 +1,14 @@
 @import "tailwindcss";
+
+/* @import './assets/tailwind/raw.css'; */
+
+/* @import './assets/tailwind/typography.css'; */
+/* @import './assets/tailwind/buttons.css'; */
+/* @import './assets/tailwind/dialog.css'; */
+/* @import './assets/tailwind/grids.css'; */
+/* @import './assets/tailwind/goodr-grid.css'; */
+/* @import './assets/tailwind/inputs.css'; */
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

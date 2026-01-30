@@ -1,0 +1,326 @@
+@layer components {
+  .msf-main {
+    @apply flex flex-row justify-center overflow-x-hidden;
+  }
+
+  .msf-main > *:not(dialog) {
+    @apply w-full max-w-7xl px-4 sm:px-6 lg:px-16;
+  }
+
+  .msf-full-bleed {
+    @apply relative
+      before:content-[''] before:absolute before:translate-x-[-150%]
+      before:bottom-0 before:left-0 before:right-0 before:top-0
+      before:scale-x-[2] before:bg-inherit
+      after:content-[''] after:absolute after:translate-x-[150%]
+      after:bottom-0 after:left-0 after:right-0 after:top-0
+      after:scale-x-[2] after:bg-inherit;
+  }
+
+  /**
+   * This class is here because, for some unknown reason, Tailwind is
+   * forcing the `::after` content to always be an empty string.
+   */
+  .link-button::after,
+  .image-tile__more::after {
+    content: 'east' !important;
+  }
+
+  /** ---------------------------------------------------------------
+   * This class is here because tailwind does not do nested selectors
+   * and I need a nested selector because the link the hover is on is
+   * an ancestor of the element being translated.
+   */
+  .image-tile:hover .image-tile__more::after {
+    transform: translateX(0.25rem) !important;
+  }
+
+  /** ---------------------------------------------------------------
+   * This class is hear because tailwind doesn't do custom grid stuff
+   * easily
+   */
+  .link-card {
+    grid-template-areas: 'icon status'
+                         'label label';
+  }
+  .link-card .material-symbols-rounded, .link-card img { grid-area: icon; }
+  .link-card .status-indicator { grid-area: status }
+  .link-card a { grid-area: label; }
+
+  /* --------------------------------------------------------------- */
+
+  .status-info {
+    @apply bg-purple-50 text-purple-700 *:text-purple-700;
+  }
+  .status-info-border {
+    @apply status-info border-purple-500;
+  }
+  .notice-info {
+    @apply status-info border-l-4 border-l-purple-500 *:border-l-0;
+  }
+
+  .status-success {
+    @apply bg-green-50 text-green-700 *:text-green-700;
+  }
+  .status-success-border {
+    @apply status-success border-green-700;
+  }
+  .notice-success {
+    @apply status-success border-l-4 border-l-green-700 *:border-l-0;
+  }
+
+  .status-warning {
+    @apply bg-sand-50 text-sand-700 *:text-sand-700
+  }
+  .status-warning-border {
+    @apply status-warning border-sand-500;
+  }
+  .notice-warning {
+    @apply status-warning border-l-4 border-l-sand-500 *:border-l-0;
+  }
+
+  .status-error {
+    @apply bg-red-50 text-red-700 *:text-red-700;
+  }
+  .status-error-border {
+    @apply status-error border-red-500;
+  }
+  .notice-error {
+    @apply status-error border-l-4 border-l-red-500 *:border-l-0;
+  }
+
+  .status-brand, .status-notice {
+    @apply bg-sky-50 text-sky-700 *:text-sky-700;
+  }
+  .status-brand-border, .status-notice-border {
+    @apply status-brand border-blue-500;
+  }
+  .notice-brand {
+    @apply status-brand border-l-4 border-l-blue-500 *:border-l-0;
+  }
+
+  /**
+   * ---------------------------------------------------------------
+   * START: Smiling Sun pictogram
+   *
+   * NOTE: The following only has SVG specific CSS that cannot be
+   *       done with pure TailwindCSS
+   */
+
+  .smiling-sun {
+    --alt-scale: 0.925;
+    --end-scale: 1;
+    --start-scale: var(--alt-scale);
+    --sunbeam-animate: var(--sun-animation, pulsingsunbeams);
+  }
+  .smiling-sun .red-bars {
+    fill: url(#red-bars-bg) !important;
+    paint-order: fill markers stroke !important;
+  }
+  .smiling-sun .tsf-lines {
+    @apply stroke-blue-900;
+    paint-order: markers stroke fill;
+    stroke-miterlimit: 10;
+  }
+  .smiling-sun .red-hatching {
+    @apply stroke-red-500;
+  }
+  .smiling-sun .tsf-lines--rounded {
+    @apply fill-none;
+    stroke-linecap: round;
+    stroke-width: 0.75;
+  }
+  .smiling-sun .tsf-shapes {
+    stroke-linecap: square;
+  }
+  .smiling-sun .red-shapes path {
+    @apply stroke-red-500;
+    stroke-width: 1.1;
+  }
+  .smiling-sun .white-shapes path {
+    @apply fill-none;
+    stroke-width: 0.76;
+  }
+
+  .smiling-sun .sunbeams g {
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+  .smiling-sun .rotating g {
+    animation-duration: 4s;
+    animation-name: rotatingsunbeams;
+  }
+  .smiling-sun .pulsing g {
+    animation-duration: 5s;
+    animation-name: pulsingsunbeams;
+  }
+
+  .smiling-sun .red-triangles {
+    --end-scale: 1;
+    --start-scale: 0.925;
+  }
+
+  .smiling-sun .white-triangles {
+    --end-scale: 0.925;
+    --start-scale: 1;
+  }
+
+  @keyframes rotatingsunbeams {
+    from { transform: rotate(0deg); transform-origin: 50% 50%; }
+    to { transform: rotate(360deg); transform-origin: 50% 50%; }
+  }
+  @keyframes pulsingsunbeams {
+    0% { transform: scale(var(--start-scale)); transform-origin: 50% 50%; }
+    50% { transform: scale(var(--end-scale)); transform-origin: 50% 50%; }
+    100% { transform: scale(var(--start-scale)); transform-origin: 50% 50%; }
+  }
+
+  /**
+   *  END:  Smiling Sun pictogram
+   * ---------------------------------------------------------------
+   * START: Payment item grid declaration
+   *
+   * NOTE: The following only has CSS that cannot be done
+   *       with pure TailwindCSS
+   */
+
+  .payment-item--good {
+    grid-template-areas:
+      'name status'
+      'amount date';
+  }
+  .payment-item--bad {
+    grid-template-areas:
+      'name status'
+      'amount date'
+      '. link';
+  }
+  .payment-item__name { grid-area: name; }
+  .payment-item__date { grid-area: date; }
+  .payment-item__amount { grid-area: amount; }
+  .payment-item__status { grid-area: status; }
+  .payment-item__contact { grid-area: link; }
+
+  @media screen and (min-width: 40rem) {
+    .payment-item--child {
+      grid-template-areas: 'date name amount status';
+      grid-template-columns: 20% 20% 20% 40%;
+    }
+    .payment-item--child.payment-item--bad {
+      grid-template-areas: 'date name amount status link';
+      grid-template-columns: 20% 20% 20% 15% 25%;
+    }
+    .payment-item--ter {
+      grid-template-areas: 'date amount status';
+      grid-template-columns: 33% 33% 34%;
+    }
+    .payment-item--ter.payment-item--bad {
+      grid-template-areas: 'date amount status link';
+      grid-template-columns: 33% 33% 15% 19%;
+    }
+    .payment-item--ter > .payment-item__name { display: none; }
+  }
+
+  @media screen and (min-width: 64rem) {
+    .payment-item--child {
+      grid-template-areas: 'date name amount status';
+      grid-template-columns: 25% 25% 25% 25%;
+    }
+    .payment-item--child.payment-item--bad {
+      grid-template-areas: 'date name amount status link';
+      grid-template-columns: 25% 25% 25% 10% 15%;
+    }
+  }
+
+  /**
+   *  END:  Payment item grid declaration
+   * ---------------------------------------------------------------
+   * START: Document upload card grid declaration
+   *
+   * NOTE: The following only has CSS that cannot be done
+   *       with pure TailwindCSS
+   */
+
+  .doc-card--done {
+    grid-template-areas: 'icon badge'
+                         'body body';
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .doc-card--upload {
+    grid-template-areas: 'icon badge'
+                         'body body'
+                         'btn btn';
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  .doc-card__icon { grid-area: icon; }
+  .doc-card__badge { grid-area: badge; }
+  .doc-card__body { grid-area: body; }
+  .doc-card__btn { grid-area: btn; }
+
+  @media (min-width: 48rem) {
+    .doc-card--done {
+      grid-template-areas: 'icon body badge';
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto;
+    }
+
+    .doc-card--upload {
+      grid-template-areas: 'icon body btn badge';
+      grid-template-columns: auto 1fr auto auto;
+      grid-template-rows: auto;
+    }
+  }
+
+  /**
+   *  END:  Document upload card grid declaration
+   * ---------------------------------------------------------------
+   * START: Double modal fix
+   *
+   * This is here because there's a known bug with dialog:modal that
+   * causes rendering issues when two modals are placed side by side
+   * in the HTML
+   */
+
+  dialog.double-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+  }
+
+  /**
+   *  END:  Double modal fix
+   * ---------------------------------------------------------------
+   * START: Progress bar
+   */
+
+  .tsf-progress {
+    @apply bg-white w-full appearance-none;
+  }
+  .tsf-progress::-moz-progress-bar {
+    @apply bg-primary-500;
+  }
+
+  .tsf-progress[value]::-webkit-progress-bar {
+    @apply bg-white;
+  }
+  .tsf-progress[value]::-webkit-progress-value {
+    @apply bg-primary-500;
+  }
+
+  .tsf-progress--rounded,
+  .tsf-progress[value]::-webkit-progress-bar,
+  .tsf-progress[value]::-webkit-progress-value {
+    @apply rounded-full;
+  }
+
+  /**
+   *  END:  Progress bar
+   * ---------------------------------------------------------------
+   */
+}

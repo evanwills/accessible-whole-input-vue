@@ -1,7 +1,6 @@
 // import { fn } from 'storybook/test';
 
 import AccessibleTextInput from './AccessibleTextInput.vue';
-// import AccessibleTextInput from '../components/shared-components/accessible-whole-input/accessible-text-input.vue';
 
 export default {
   component: AccessibleTextInput,
@@ -17,7 +16,7 @@ export default {
   //   errorMsgFunc: { control: { type: 'function' } },
   //   externalInvalid: { control: { type: 'boolean' } },
   //   help: { control: { type: 'text' } },
-  //   helpFirst: { control: { type: 'boolean' } },
+  //   helpLast: { control: { type: 'boolean' } },
   //   hideLabel: { control: { type: 'boolean' } },
   //   id: { control: { type: 'text' } },
   //   group: { control: { type: 'boolean' } },
@@ -37,7 +36,20 @@ export default {
   //   value: { control: { type: 'text|number' } },
   //   values: { control: { type: 'object' } },
   //   validateOnInput: { control: { type: 'boolean' } },
-    validationType: { control: { type: 'select' }, options: ['addressline', 'email', 'name', 'title', 'url'] },
+    validationType: {
+      control: { type: 'select' },
+      options: [
+        'addressline',
+        'email',
+        'name',
+        'title',
+        'url',
+        'fixedphone',
+        'mobilephone',
+        'anyphone',
+        'intphone',
+      ],
+    },
   //   watchBlur: { control: { type: 'boolean' } },
   },
   // args: { required: fn() },
@@ -78,18 +90,20 @@ export const RequiredRev = {
 
 export const Help = {
   args: {
-    id: 'help-last-text-input',
+    errorMsg: 'Please fill in the input',
     help: 'This is some help text',
+    id: 'help-last-text-input',
     label: 'Input with help',
   },
 };
 
-export const HelpFirst = {
+export const HelpLast = {
   args: {
-    help: 'This is some help text',
-    helpFirst: true,
+    errorMsg: 'Please fill in the input',
+    help: 'This is some help text but it sits below the input field',
+    helpLast: true,
     id: 'help-first-text-input',
-    label: 'Input with help (first)',
+    label: 'Input with help (last)',
   },
 };
 
@@ -109,5 +123,17 @@ export const MultiLine = {
     id: 'multi-line-text-input',
     label: 'Multi-line Input (textarea)',
     multiLine: true,
+    value: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque.',
+  },
+};
+
+export const MultiLineAutoExpand = {
+  description: 'stuff',
+  args: {
+    autoExpand: true,
+    id: 'multi-line-text-input',
+    label: 'Multi-line Input (textarea)',
+    multiLine: true,
+    value: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Adipiscing elit quisque faucibus ex sapien vitae pellentesque. Vitae pellentesque sem placerat in id cursus mi. Cursus mi pretium tellus duis convallis tempus leo. Tempus leo eu aenean sed diam urna tempor. Urna tempor pulvinar vivamus fringilla lacus nec metus.',
   },
 };

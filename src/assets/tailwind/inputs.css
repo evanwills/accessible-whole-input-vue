@@ -1,0 +1,64 @@
+@layer components {
+  .tsf-radio-card {
+    @apply
+      relative text-bold-md p-4 rounded-lg *:cursor-pointer
+      cursor-pointer select-none w-full hover:bg-secondary-50
+      has-[:checked]:bg-secondary-100 has-[:checked]:text-primary-900
+      focus-within:bg-secondary-100;
+  }
+
+  .tsf-radio-card > input {
+    @apply appearance-none absolute top-0 w-full left-0 h-full
+      rounded-lg border border-grey-300 hover:border-primary-500
+      tsf-focus checked:border-primary-500;
+  }
+
+  .tsf-radio-input {
+    @apply appearance-none cursor-pointer !w-[1.375rem] !h-[1.375rem]
+      rounded-full border border-grey-300 checked:border-[5px]
+      checked:border-primary-700 hover:outline-4 hover:outline
+      hover:outline-offset-0 hover:outline-secondary-100 tsf-focus
+      focus:hover:ring-2 ring-offset-0 ring-secondary-100;
+  }
+
+  .tsf-checkbox-input--base {
+    @apply appearance-none tsf-focus flex shrink-0 items-center
+      justify-center !w-[1.375rem] !h-[1.375rem] border
+      rounded before:font-symbol checked:before:content-['check']
+      text-white text-[1.25rem] cursor-pointer checked:bg-blue-500
+      disabled:cursor-not-allowed;
+  }
+
+  .tsf-checkbox-input {
+    @apply tsf-checkbox-input--base border-blue-500
+  }
+  .tsf-checkbox-input--error {
+    @apply tsf-checkbox-input--base border-red-500 focus:outline-red-500;
+  }
+  .tsf-checkbox-input:disabled + label,
+  .tsf-radio-input:disabled + label {
+    cursor: not-allowed !important;
+  }
+
+  .tsf-field-error {
+    @apply text-bold-md flex items-start text-red-500
+      before:text-[20px] before:leading-5 before:content-['error']
+      before:font-symbol before:pr-1;
+  }
+
+  /**
+   * `.NO-INNER-SPIN` removes the visible up/down arrows rendered
+   * number inputs
+   */
+  input.NO-INNER-SPIN {
+    -moz-appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      display: none;
+      opacity: 0;
+    }
+  }
+}

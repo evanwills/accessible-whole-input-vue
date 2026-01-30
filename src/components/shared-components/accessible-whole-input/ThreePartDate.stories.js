@@ -11,9 +11,9 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: "ThreePartDate fields is a custom rendering/implementation of a date field that provides separate Day, Month & Year input boxes. __Note:__ invalid characters are automatically stripped"
-      }
-    }
+        component: 'ThreePartDate fields is a custom rendering/implementation of a date field that provides separate Day, Month & Year input boxes. __Note:__ invalid characters are automatically stripped',
+      },
+    },
   },
 };
 

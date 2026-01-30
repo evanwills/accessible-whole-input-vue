@@ -5,8 +5,8 @@
     :class="wrapClass"
     :id="id">
     <span :class="errorIconClass">{{ symbol }}</span>
-    <slot v-if="extraError === ''">{{ text }}</slot>
-    <div v-if="extraError !== ''" v-html="extraError"></div>
+    <span :class="errorMsgClass"><slot v-if="extraError === ''">{{ text }}</slot></span>
+    <div v-if="extraError !== ''" :class="errorMsgClass" v-html="extraError"></div>
   </div>
 </template>
 
@@ -81,7 +81,7 @@ const showError = computed(() => (props.show || props.externalInvalid));
 const wrapClass = computed(() => {
   const m = (props.spaceAbove === true)
     ? 'mt-2'
-    : 'mb-2';
+    : 'mb-0.5';
 
   return 'text-body-md font-semibold max-w-md flex gap-x-2 '
     + `${m} ${getTwStatusTxtColour(props.type, 'error', false)}`;
@@ -91,15 +91,18 @@ const symbol = computed(() => getTwStatusIcon(props.icon, props.type));
 
 const errorIconClass = computed(() => {
   const tmp = 'font-semibold';
+  const pre = 'error-msg'
 
   let output = (props.show === true || props.externalInvalid === true)
-    ? `${tmp} ${tmp}--show`
+    ? `${tmp} ${pre}--show`
     : tmp;
 
   if (props.spaceAbove === true) {
-    output += ` ${tmp}--checkable`;
+    output += ` ${pre}--checkable`;
   }
 
   return `text-[1.25rem] material-symbols-rounded ${output}`;
 });
+
+const errorMsgClass = computed(() => 'relative bottom-0.5')
 </script>

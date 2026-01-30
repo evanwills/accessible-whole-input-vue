@@ -1,0 +1,115 @@
+@layer utilities {
+  .font-poppins { font-family: 'Poppins', 'sans-serif'; }
+
+  .font-symbol { font-family: 'Material Symbols Rounded'; }
+
+  .text-heading-xl-desktop {
+    font-size: heading-xl-desktop;
+    font-weight: -0.02em;
+    letter-spacing: 2.5rem;
+    line-height: 2rem;
+  }
+  .text-heading-xl-mobile {
+    font-size: heading-xl-mobile;
+    font-weight: -0.02em;
+    letter-spacing: 2.25rem;
+    line-height: 1.75rem;
+  }
+  .text-heading-lg {
+    font-size: heading-lg;
+    font-weight: -0.02em;
+    letter-spacing: 2rem;
+    line-height: 1.5rem;
+  }
+  .text-heading-md {
+    font-size: heading-md;
+    font-weight: -0.02em;
+    letter-spacing: 1.5rem;
+    line-height: 1.125rem;
+  }
+  .text-heading-sm {
+    font-size: heading-sm;
+    letter-spacing: 1.25rem;
+    line-height: 1rem;
+  }
+  .text-heading-xs {
+    font-size: heading-xs;
+    letter-spacing: 1rem;
+    line-height: 0.875rem;
+  }
+  .text-body-xl {
+    font-size: body-xl;
+    letter-spacing: 1.75rem;
+    line-height: 1.125rem;
+  }
+  .text-bold-xl {
+    font-size: bold-xl;
+    letter-spacing: 1.75rem;
+    line-height: 1.125rem;
+  }
+  .text-body-lg {
+    font-size: body-lg;
+    letter-spacing: 1.5rem;
+    line-height: 1rem;
+  }
+  .text-bold-lg {
+    font-size: bold-lg;
+    letter-spacing: 1.5rem;
+    line-height: 1rem;
+  }
+  .text-body-md {
+    font-size: body-md;
+    letter-spacing: 1.25rem;
+    line-height: 0.875rem;
+  }
+  .text-bold-md {
+    font-size: bold-md;
+    letter-spacing: 1.25rem;
+    line-height: 0.875rem;
+  }
+  .text-body-sm {
+    font-size: body-sm;
+    letter-spacing: 1rem;
+    line-height: 0.75rem;
+  }
+  .text-bold-sm {
+    font-size: bold-sm;
+    letter-spacing: 1rem;
+    line-height: 0.75rem;
+  }
+  .text-link-xl {
+    font-size: link-xl;
+    letter-spacing: 1.75rem;
+    line-height: 1.125rem;
+  }
+  .text-link-lg {
+    font-size: link-lg;
+    letter-spacing: 1.5rem;
+    line-height: 1rem;
+  }
+  .text-link-md {
+    font-size: link-md;
+    letter-spacing: 1.25rem;
+    line-height: 0.875rem;
+  }
+  .text-link-sm {
+    font-size: link-sm;
+    letter-spacing: 1rem;
+    line-height: 0.75rem;
+  }
+  .text-caption {
+    font-size: caption;
+    letter-spacing: 1rem;
+    line-height: 0.75rem;
+  }
+  .text-label-lg {
+    font-size: label-lg;
+    letter-spacing: 1.25rem;
+    line-height: 0.875rem;
+  }
+  .text-label-sm {
+    font-size: label-sm;
+    letter-spacing: 0.75rem;
+    line-height: 0.75rem;
+  }
+}

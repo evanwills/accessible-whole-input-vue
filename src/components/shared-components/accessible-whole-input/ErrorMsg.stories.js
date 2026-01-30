@@ -5,6 +5,10 @@ export default {
   title: 'Components/Form inputs/Utility components/ErrorMsg',
   tags: ['autodocs'],
 
+  argTypes: {
+    type: { control: { type: 'select' }, options: ['error', 'info', 'warning', 'success', 'brand'] },
+  },
+
   parameters: {
     docs: {
       description: {
@@ -24,7 +28,7 @@ export const Default = {
 
 export const HTMLError = {
   args: {
-    id: 'simple-error',
+    id: 'html-error',
     extraError: 'You did something <a href="#">wrong</a>',
     show: true,
   }
@@ -32,8 +36,17 @@ export const HTMLError = {
 
 export const HiddenError = {
   args:{
-    id: "simple-error",
-    extraError: "You did something <a href=\"#\">wrong</a>",
-    show: false
+    id: "hidden-error",
+    show: false,
+    text: "You did something wrong",
+  }
+};
+
+export const Warning = {
+  args:{
+    id: "warning-error",
+    show: true,
+    text: "You did something wrong",
+    type: 'warning',
   }
 };

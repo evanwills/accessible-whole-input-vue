@@ -1,6 +1,8 @@
 /** @type { import('@storybook/vue3-vite').Preview } */
 
 import '../src/style.css';
+import '../src/assets/material-symbols-rounded.css';
+// import '../src/assets/tailwind/tailwind.css';
 
 const preview = {
   parameters: {

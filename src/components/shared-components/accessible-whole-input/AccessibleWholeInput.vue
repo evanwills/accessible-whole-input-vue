@@ -10,10 +10,10 @@
     </span>
 
     <!-- START: help-msg (top) -->
-    <HelpTxt v-if="helpFirst === true" :help="help" :id="getID('help')">
+    <HelpTxt v-if="helpLast === false" :help="help" :id="getID('help')">
       <template v-slot:help></template>
     </HelpTxt>
-    <!-- START: help-msg (top) -->
+    <!--  END:  help-msg (top) -->
 
     <!-- START: error-msg -->
     <ErrorMsg
@@ -31,17 +31,18 @@
     <!--  END:  error-msg -->
 
     <div
-        v-on:blur="onBlur"
-        v-on:change="onChange"
-        v-on:focus="onFocus"
-        v-on:input="onInput">
+      class="w-full"
+      v-on:blur="onBlur"
+      v-on:change="onChange"
+      v-on:focus="onFocus"
+      v-on:input="onInput">
       <!-- START: field -->
       <slot></slot>
       <!--  END:  field -->
     </div>
 
     <!-- START: help-msg (bottom) -->
-    <HelpTxt v-if="helpFirst === false" :help="help" :id="getID('help')">
+    <HelpTxt v-if="helpLast === true" :help="help" :id="getID('help')">
       <template v-slot:help></template>
     </HelpTxt>
     <!--  END:  help-msg (bottom) -->
@@ -140,7 +141,7 @@ const labelClass = computed(() => {
     output += ' sr-only';
   }
 
-  return `${output} box-border block`;
+  return `${output} box-border block font-semibold text-grey-900`;
 });
 
 const wrapClass = computed(() => {
